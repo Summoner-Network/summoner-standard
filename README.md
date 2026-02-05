@@ -1,5 +1,7 @@
 # Summoner Standard Profile (Draft v0.1.0)
 
+**Webpage:** [https://summoner-network.github.io/summoner-standard](https://summoner-network.github.io/summoner-standard)
+
 This repository hosts a draft standard profile for the interoperability-critical semantics of Summoner.
 
 The profile focuses on:
@@ -74,9 +76,8 @@ Discussion and change proposals are welcome:
 
 ## Contact
 
-Maintainer: 
-```
-Rémy Tuyéras (Summoner Corp.)
-rtuyeras@summoner.org
-```
+Maintainers: 
+
+- Rémy Tuyéras (CTO, Summoner Corp.) | rtuyeras@summoner.org
+
 
