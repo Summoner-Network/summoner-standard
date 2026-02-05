@@ -3,6 +3,7 @@
 This site publishes a draft standard profile for the interoperability-critical semantics of Summoner.
 
 **Status:** Draft v0.1.0.
+**Date:** January 2026  
 
 ## Version
 

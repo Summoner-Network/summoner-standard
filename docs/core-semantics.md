@@ -1,6 +1,6 @@
 # Core Semantics and Conformance Requirements
 
-**Version:** `0.1.0`
+**Version:** v0.1.0.  
 **Date:** January 2026  
 **Status:** Draft for discussion.
 
