@@ -1,4 +1,4 @@
-# Conformance guidance (trace-level)
+# Conformance guidance
 
 This page is informative. The normative conformance requirements are in `core-semantics.md` Section 8.
 

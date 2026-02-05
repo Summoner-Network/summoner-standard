@@ -1,6 +1,6 @@
-# Summoner: Operational Semantics and Compositional Structure (Supplementary Note)
+# Operational Semantics and Compositional Structure (Supplementary Note)
 
-**Author:** Rémy Tuyéras (Summoner Corp.)  
+**Version:** `0.1.0` 
 **Date:** January 2026  
 **Status:** Supplementary and informative. Complements the core profile.
 

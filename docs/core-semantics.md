@@ -1,6 +1,6 @@
-# Summoner Standard Profile: Core Semantics and Conformance Requirements
+# Core Semantics and Conformance Requirements
 
-**Author:** Rémy Tuyéras (Summoner Corp.)  
+**Version:** `0.1.0`
 **Date:** January 2026  
 **Status:** Draft for discussion.
 
