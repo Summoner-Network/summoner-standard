@@ -1,7 +1,3 @@
----
-title: Versioning
----
-
 # Versioning policy
 
 The normative requirement is:

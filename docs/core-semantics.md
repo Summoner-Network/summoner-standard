@@ -1,7 +1,3 @@
----
-title: Core Semantics and Conformance Requirements
----
-
 # Summoner Standard Profile: Core Semantics and Conformance Requirements
 
 **Author:** Rémy Tuyéras (Summoner Corp.)  

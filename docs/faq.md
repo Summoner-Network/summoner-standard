@@ -1,7 +1,3 @@
----
-title: FAQ
----
-
 # FAQ
 
 ## What does "standard profile" mean here?

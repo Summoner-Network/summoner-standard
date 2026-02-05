@@ -1,7 +1,3 @@
----
-title: Supplementary Note
----
-
 # Summoner: Operational Semantics and Compositional Structure (Supplementary Note)
 
 **Author:** Rémy Tuyéras (Summoner Corp.)  

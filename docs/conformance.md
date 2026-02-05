@@ -1,7 +1,3 @@
----
-title: Conformance
----
-
 # Conformance guidance (trace-level)
 
 This page is informative. The normative conformance requirements are in `core-semantics.md` Section 8.
