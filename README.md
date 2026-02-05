@@ -70,7 +70,7 @@ Discussion and change proposals are welcome:
 
 ## Licensing
 
-Apache 2.0 or MIT
+[Apache 2.0](/LICENSE)
 
 ## Contact
 
