@@ -18,7 +18,7 @@ Out of scope:
 
 ## Status
 
-**Draft v0.1.0. Not a NIST publication.**
+**Draft v0.1.0**
 
 This is an open draft intended to support:
 - precise interoperability discussions
