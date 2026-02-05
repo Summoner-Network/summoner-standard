@@ -1,6 +1,6 @@
-# Operational Semantics and Compositional Structure (Supplementary Note)
+# Supplementary Note: Operational Semantics and Compositional Structure
 
-**Version:** Draft v0.1.0.  
+**Version:** v0.1.0.  
 **Date:** January 2026  
 **Status:** Supplementary and informative. Complements the core profile.
 
