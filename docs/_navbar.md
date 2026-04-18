@@ -1,5 +1,6 @@
 - [Home](/)
-- [Core Spec](core-semantics.md)
+- [Core Profile](core-semantics.md)
+- [Agent Identity](identity-profile.md)
 - [Conformance](conformance.md)
 - [Versioning](versioning.md)
 - [FAQ](faq.md)

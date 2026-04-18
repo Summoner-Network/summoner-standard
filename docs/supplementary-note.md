@@ -1,8 +1,8 @@
 # Supplementary Note: Operational Semantics and Compositional Structure
 
-**Version:** v0.1.0.  
-**Date:** January 2026  
-**Status:** Supplementary and informative. Complements the core profile.
+**Standards set release:** `v0.2.0`<br>
+**Date:** April 2026<br>
+**Status:** Supplementary and informative. Complements the core profile within the current standards set.
 
 ## Purpose
 
@@ -10,7 +10,9 @@ This note provides additional context on the operational model behind Summoner, 
 
 The goal is to clarify what could be standardized and what can be tested, without requiring adoption of any particular implementation.
 
-This note is meant to complement the main standard profile, not replace it.
+This note is meant to complement the main core profile, not replace it. Portable public identity is standardized separately in [`identity-profile.md`](identity-profile.md).
+
+The broader vision is to make Summoner reviewable as a system of explicit semantics rather than as one SDK's hidden behavior. A standard is useful here because it turns routes, state changes, receiver outcomes, and public identity into shared artifacts that users can understand, reviewers can inspect, and implementations can test against.
 
 ## 1. Operational model at a glance
 
@@ -86,6 +88,8 @@ Each receiver returns an explicit Action:
 * **MOVE**: advance by activating transition and target states
 
 These actions update the tape and trigger relevant senders. This makes control flow observable and testable as a trace.
+
+In the current core profile, this send step is limited to receiver-triggered untimed senders. Richer sender-side features such as event-data handoff or timed scheduling may exist in implementations, but they are not part of the first core review profile.
 
 ## 2. Route structure as a compositional interface
 
@@ -178,9 +182,9 @@ Standards relevance: this isolates what belongs to the main stage progression ve
 
 ## 5. Mini structural examples
 
-Summoner includes agent templates that isolate specific SDK feature combinations (receive/send, hooks, tape, flow, triggers).
+The examples below are intentionally self-contained. They are not references to another repository; they are small local sketches meant to show the structural point directly in this document.
 
-### 5.1 Arrow agent (CatArrowAgent)
+### 5.1 Single-route example
 
 What it demonstrates:
 
@@ -188,24 +192,52 @@ What it demonstrates:
 * eligibility via tape gating
 * explicit outcome via MOVE / STAY / TEST
 
-This is a simple entry point for conformance-style trace tests.
+This is the smallest useful shape for a conformance-style trace test.
 
 Receiver snippet:
 
 ```python
-@client.receive(route="f --[ eta_f ]--> p")
-async def choose_expedite_clause(msg):
-    # does not need to advance object state
-    return Move(Trigger.ok)
+@client.upload_states()
+async def upload_states(_msg):
+    return ["draft"]
+
+@client.receive(route="draft --[approve]--> approved")
+async def evaluate_approval(msg):
+    if msg.get("approved"):
+        return Move(Trigger.ok)
+    if msg.get("review_only"):
+        return Test(Trigger.ok)
+    return Stay(Trigger.retry)
 ```
 
-### 5.2 Triangle agent (CatTriangleAgent)
+This one example already shows the core shape:
+
+* `draft` is the gate
+* `approve` is the explicit transition label
+* `approved` is the postcondition activated on MOVE
+* STAY and TEST remain visible, rather than being hidden in ad hoc control flow
+
+### 5.2 Direct step versus staged path
 
 What it demonstrates:
 
-* the interoperability question "direct step vs composed path" in a way that is testable without requiring strict equality
+* the structural difference between a direct step and a refinement into intermediate stages
+* why interoperability review must say which observables it compares
 
-A practical conformance framing is: under specified inputs and policy, do implementations reach the same observable tape state and emit compatible traces.
+Minimal route sketches:
+
+```text
+Design A:
+request --[approve]--> approved
+
+Design B:
+request --[review]--> under_review
+under_review --[approve]--> approved
+```
+
+Both designs can end in `approved`, but they do not expose the same intermediate state structure. Summoner makes that difference explicit instead of hiding it.
+
+A practical review question is therefore not just "do they both finish?" but "at what abstraction layer are they intended to be compared?" The standard benefits from this explicitness because it can specify exactly which traces must match and which structural refinements remain implementation choice.
 
 ## 6. State-with-context and branching workflows (optional intuition)
 
@@ -215,48 +247,87 @@ This section is optional. It is not required to understand the operational seman
 * Routes define the local continuation structure.
 * Handlers implement local rules for which branch to take.
 
-## 7. Applications shown in the current prototype
+## 7. Application-shaped examples
 
-### 7.1 Supply chain (CatUpdateAgent)
+### 7.1 Supply-chain amendment workflow
 
-This prototype models a common industrial pattern:
+This pattern models a common industrial workflow:
 
 * an initial operational decision
 * amendments that refine commitments
 * execution under feasibility constraints
 
-Three layers:
+Minimal route sketch:
 
-* stage progression: `A -> B -> C -> D`
-* a primary decision choosing sourcing path: `A --[f]--> B` or `A --[g]--> B`
-* an amendment encoding intent without changing stage:
+```text
+Stage progression:
+request --[quote]--> quoted
+quoted --[allocate]--> allocated
+allocated --[ship]--> shipped
 
-  * `f --[eta_f]--> p` or `f --[mu_f]--> q`
-  * `g --[eta_g]--> p` or `g --[mu_g]--> q`
+Primary sourcing choice:
+request --[source_local]--> quoted
+request --[source_import]--> quoted
 
-Finally, execution at `C -> D` selects a shipping lane based on intent and feasibility, with explicit override rules and explicit logging of exceptions.
+Amendments to sourcing intent:
+source_local --[green_clause]--> green
+source_local --[low_cost_clause]--> low_cost
+source_import --[green_clause]--> green
+source_import --[low_cost_clause]--> low_cost
+```
+
+Execution can then branch at `allocated --[ship]--> shipped` based on feasibility plus whichever sourcing path and amendment states are active.
 
 Operationally, this yields a trace that is mechanically testable: tape states and emitted messages reflect the chosen 1-cell, the chosen amendment, the executed shipment, and any exception taken.
 
-### 7.2 Handshake and secure session establishment (HSAgent_0 / HSAgent_1)
+### 7.2 Handshake and session establishment
 
 A handshake can be expressed as a state machine with explicit gates (preconditions) and explicit commitments (activated states) that later steps depend on. This makes "what was verified" and "what was committed" explicit, which is useful for interoperability and audit.
 
-### 7.3 Composition by extension: adding negotiation (HSSellAgent / HSBuyAgent)
+Minimal route sketch:
+
+```text
+unverified --[hello]--> challenged
+challenged --[proof_ok]--> authenticated
+authenticated --[session_open]--> ready
+```
+
+Later routes can gate on `authenticated` or `ready`, which makes the handshake result part of the visible state model instead of an invisible side effect.
+
+### 7.3 Composition by extension: adding negotiation
 
 An existing workflow can be extended by inserting new routes and states without rewriting the entire agent. For example, a negotiation phase can be inserted by introducing intermediate states and amendment routes that refine downstream choices while keeping prior semantics intact.
 
-## 8. What could become a standard profile
+Minimal route sketch:
 
-The immediate standard candidate is not the full SDK. It is a profile capturing the interoperability-critical semantics:
+```text
+Base workflow:
+quoted --[accept_quote]--> committed
+
+Extended workflow:
+quoted --[counter_offer]--> negotiating
+negotiating --[accept_counter]--> committed
+negotiating --[reject_counter]--> quoted
+```
+
+This is useful standard-wise because it shows how the route layer can grow without making control flow opaque. Extensions remain explicit and inspectable.
+
+## 8. What belongs in the standard set
+
+The immediate standard candidate is not the full SDK. It is a core profile capturing the interoperability-critical semantics:
 
 * route grammar, parsing, and canonicalization
 * token matching rules (gating and acceptance)
 * tape model (single or indexed) and activation rules
 * Action semantics (MOVE / STAY / TEST) and tape update rules
 * hook ordering and drop behavior (returning `None`)
+* receiver-triggered untimed sender eligibility and ordering
 
 A conformance suite can be derived as trace-level tests: given an initial tape and a sequence of inputs, a conforming implementation produces the same sequence of tape deltas and observable events.
+
+Current SDK sender extensions such as receiver-attached event payload data, sender-owned payload transfer policy, and timed or guard-based scheduling are promising, but they fit better as later extension profiles than as part of the first core standard.
+
+Portable self-signed public identity is a different kind of candidate. It fits the standard set more cleanly because it has a crisp portable object boundary and verification contract, which is why the current review release standardizes it separately in [`identity-profile.md`](identity-profile.md).
 
 ## 9. DNA: representing agent behavior as a portable bundle
 

@@ -1,61 +1,81 @@
-# Summoner Standard Profile (Draft v0.1.0)
+# Summoner Standard Profiles
 
-This site publishes a draft standard profile for the interoperability-critical semantics of Summoner.
+This site publishes a draft standards set for the parts of Summoner that are strong candidates for implementation-independent interoperability.
 
-**Status:** Draft v0.1.0.  
-**Date:** January 2026  
+**Standards set release:** `v0.2.0`<br>
+**Date:** April 2026<br>
+**Status:** Draft for review
 
-## Version
+The current review release is intentionally conservative. It standardizes the portable core execution boundary and the portable public identity boundary. It does not yet standardize the richer sender orchestration runtime from the `summoner-core` 1.2.x line.
 
-- **Profile:** `summoner-standard-profile/0.1` (draft series)
-- **Release tag:** `v0.1.0`
+## Current profiles
 
-## What this profile standardizes
+| Profile | Identifier | What it standardizes | Main document |
+| --- | --- | --- | --- |
+| Core profile | `summoner-core-profile/0.1` | routes, matching, tapes, receiver processing, receiver-triggered untimed sender admission, and the core DNA view | [`core-semantics.md`](core-semantics.md) |
+| Agent identity profile | `summoner-agent-identity-profile/id.v1` | the self-signed public identity record, canonical signing bytes, verification, fingerprint derivation, and continuity semantics | [`identity-profile.md`](identity-profile.md) |
 
-This profile defines:
-- route grammar, parsing, and canonical string form
-- node matching semantics used for gating and compatibility checks
-- the tape model (single and indexed variants)
-- deterministic execution semantics for:
-  - hook ordering and drop behavior
-  - receiver eligibility and ordering
-  - tape activation rules for TEST / STAY / MOVE
-  - sender triggering and ordering
-- a portable DNA representation for enumerating registrations
-- conformance requirements suitable for implementation-independent testing
+## Why a standard helps
 
-## What this profile does not standardize
+Summoner already makes important parts of agent behavior explicit:
+- route structure
+- state admission and activation
+- receiver outcomes
+- portable public identity
 
-This profile does not standardize:
-- transport, networking, or deployment
-- UI and tooling
-- application workflows
-- cryptography (the profile defines control points relevant to security review, not cryptographic primitives)
+The reason to standardize is to keep those explicit structures portable. A standard turns them into a shared contract for users, reviewers, power testers, and future independent implementations.
+
+The point is not to force one runtime architecture. The point is to preserve the semantics that should remain comparable even when the internal implementation changes.
+
+## Design approach
+
+This review set is intentionally designed to:
+- standardize externally observable behavior rather than internal queue or scheduler mechanics
+- use layered profiles instead of one monolithic specification
+- standardize only what can be described cleanly and tested independently
+- defer richer sender-runtime features until they can justify a separate extension profile
+
+## Why this review set is narrow
+
+This standards set focuses on behavior that is:
+- portable across independent implementations
+- externally observable at a conformance boundary
+- precise enough for reviewers and power testers to compare
+
+That is why the current set includes:
+- the core execution semantics
+- the public identity object
+
+and defers:
+- richer sender orchestration features such as `Event.data`, `use_data`, `data_mode`, `every`, and `run_while`
+- transport and deployment choices
+- registry-backed trust and governance policy
+
+## Related implementation repositories
+
+These repositories are informative reference points for the current public implementations behind the standard. They are useful for orientation and code review, but they are not normative parts of the profile definitions.
+
+- **Core SDK reference:** [`Summoner-Network/summoner-core`](https://github.com/Summoner-Network/summoner-core)
+- **Aurora identity reference:** [`Summoner-Network/extension-agentclass`](https://github.com/Summoner-Network/extension-agentclass)
 
 ## Documents
 
-- **Core Semantics and Conformance Requirements (normative)**  
-  [`core-semantics.md`](core-semantics.md)
+- **Core profile (normative):** [`core-semantics.md`](core-semantics.md)
+- **Agent identity profile (normative):** [`identity-profile.md`](identity-profile.md)
+- **Conformance guidance (informative):** [`conformance.md`](conformance.md)
+- **Supplementary note (informative):** [`supplementary-note.md`](supplementary-note.md)
+- **Versioning policy:** [`versioning.md`](versioning.md)
+- **FAQ:** [`faq.md`](faq.md)
 
-- **Operational Semantics and Compositional Structure (supplementary, informative)**  
-  [`supplementary-note.md`](supplementary-note.md)
+## Review focus
 
-- **Conformance notes (trace-level guidance)**  
-  [`conformance.md`](conformance.md)
+This draft is written for:
+- users who want a stable contract for what Summoner standardizes today
+- reviewers checking whether the standard boundary is coherent and justified
+- power testers building route, trace, and identity compatibility vectors
+- future independent implementations
 
-- **Versioning policy**  
-  [`versioning.md`](versioning.md)
-
-- **FAQ**  
-  [`faq.md`](faq.md)
-
-## Audience
-
-This profile is written for:
-- implementers who want interoperability with compatible behavior
-- reviewers who need a crisp description of observable semantics
-- teams designing conformance tests and trace comparators
-
-## Feedback
-
-Feedback is welcome via Issues and Pull Requests in the repository.
+Useful review questions:
+- Is the core profile precise enough to compare runtimes without overfitting to one SDK?
+- Is the `id.v1` public identity record a clean portable boundary?
+- Are the deferred sender-runtime features correctly left outside the first standard review release?
