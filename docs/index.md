@@ -6,14 +6,14 @@ This site publishes a draft standards set for the parts of Summoner that are str
 **Date:** April 2026<br>
 **Status:** Draft for review
 
-The current review release is intentionally conservative. It standardizes the portable core execution boundary and the portable public identity boundary. It does not yet standardize the richer sender orchestration runtime from the `summoner-core` 1.2.x line.
+The current review release is intentionally conservative. It standardizes the portable core execution boundary and the portable public identity boundary. Extended sender orchestration remains outside this first review set.
 
 ## Current profiles
 
 | Profile | Identifier | What it standardizes | Main document |
 | --- | --- | --- | --- |
 | Core profile | `summoner-core-profile/0.1` | routes, matching, tapes, receiver processing, receiver-triggered untimed sender admission, and the core DNA view | [`core-semantics.md`](core-semantics.md) |
-| Agent identity profile | `summoner-agent-identity-profile/id.v1` | the self-signed public identity record, canonical signing bytes, verification, fingerprint derivation, and continuity semantics | [`identity-profile.md`](identity-profile.md) |
+| Agent identity profile | `summoner-agent-identity-profile/id.v1` | the self-signed public identity record, canonical signing bytes, verification, fingerprint derivation, and continuity semantics; informatively, a self-sovereign-style, TLS-inspired agent identity layer | [`identity-profile.md`](identity-profile.md) |
 
 ## Why a standard helps
 
@@ -21,7 +21,7 @@ Summoner already makes important parts of agent behavior explicit:
 - route structure
 - state admission and activation
 - receiver outcomes
-- portable public identity
+- the public identity record
 
 The reason to standardize is to keep those explicit structures portable. A standard turns them into a shared contract for users, reviewers, power testers, and future independent implementations.
 
@@ -33,7 +33,7 @@ This review set is intentionally designed to:
 - standardize externally observable behavior rather than internal queue or scheduler mechanics
 - use layered profiles instead of one monolithic specification
 - standardize only what can be described cleanly and tested independently
-- defer richer sender-runtime features until they can justify a separate extension profile
+- leave extended sender orchestration for a later profile once it can be specified cleanly and tested independently
 
 ## Why this review set is narrow
 
@@ -44,10 +44,10 @@ This standards set focuses on behavior that is:
 
 That is why the current set includes:
 - the core execution semantics
-- the public identity object
+- the public identity record
 
 and defers:
-- richer sender orchestration features such as `Event.data`, `use_data`, `data_mode`, `every`, and `run_while`
+- extended sender orchestration semantics, such as event-carried sender data and timed or continuing sender modes
 - transport and deployment choices
 - registry-backed trust and governance policy
 
@@ -78,4 +78,4 @@ This draft is written for:
 Useful review questions:
 - Is the core profile precise enough to compare runtimes without overfitting to one SDK?
 - Is the `id.v1` public identity record a clean portable boundary?
-- Are the deferred sender-runtime features correctly left outside the first standard review release?
+- Is the boundary around extended sender orchestration placed correctly for this first review release?

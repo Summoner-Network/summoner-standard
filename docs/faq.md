@@ -6,7 +6,7 @@ The current draft standardizes two profiles:
 - the core execution profile
 - the `id.v1` agent identity profile
 
-It intentionally does not standardize the full sender orchestration runtime from the `summoner-core` 1.2.x line.
+It leaves extended sender orchestration outside the current review release.
 
 ## Does this standards set require using the Summoner SDK?
 
@@ -16,9 +16,9 @@ No. Both profiles are written for implementation-independent conformance.
 
 Because Summoner already exposes route structure, state admission, receiver outcomes, and portable identity in a way that can be reviewed and compared. The standard exists to turn those explicit semantics into a stable public contract instead of leaving them as SDK-specific convention.
 
-## Why is full send not standardized yet?
+## Why does the core profile stop at receiver-triggered untimed sender admission?
 
-Because the current sender runtime mixes portable observables with runtime-specific orchestration choices such as batching, timers, guard callables, and sender-owned data handoff. The current review release standardizes only the narrower receiver-triggered untimed sender boundary inside the core profile.
+Because that is the smallest sender boundary that is easy to observe, compare, and reproduce across implementations. More elaborate sender orchestration mixes portable behavior with runtime policy such as batching, timers, guard callables, event-carried data, and sender-owned data handoff.
 
 ## Where do the current public implementations live?
 
@@ -36,19 +36,21 @@ Yes. The separate `id.v1` agent identity profile standardizes the portable publi
 
 No. The normative identity profile covers the portable public record. Aurora's local identity-file format is documented as an implementation note, not as a conformance requirement.
 
-## Is `id.v1` a DID?
+## How should I think about `id.v1` relative to SSI, TLS, or DID?
 
-No. `id.v1` is a self-signed public identity record profile. It can coexist with registries, directories, or DID-based systems, but it does not require DID resolution or DID-document semantics.
+`id.v1` is best understood as a self-signed, self-sovereign-style, TLS-inspired agent identity profile.
 
-## Does the core profile standardize `Event.data`, `use_data`, `data_mode`, `every`, or `run_while`?
+It is specified directly as its own Summoner profile. It can coexist with registries, directories, and DID-based systems, but readers should not assume DID-specific identifier syntax, DID-document structure, or DID-resolution rules unless a future profile defines them.
 
-No. Those richer sender orchestration features are intentionally deferred from the current standards set.
+## Does the core profile include extended sender orchestration features?
 
-## Why does the core profile mention `multi` but defer `use_data`?
+No. The current core profile stops at receiver-triggered untimed sender admission. Event-carried sender data, sender data-transfer policy, and timed or continuing sender modes remain outside this review release.
+
+## Why does the core profile mention `multi` but leave `use_data` outside the profile?
 
 Because `multi` is a sender-local emission rule, while `use_data` changes the receiver-event-sender contract itself.
 
-`multi` only affects how many payloads an already admitted sender invocation may emit. `use_data` introduces receiver-attached event payloads, sender argument passing, payload transfer policy, and per-event invocation semantics. That broader contract deserves a separate extension profile if it is standardized.
+`multi` only affects how many payloads an already admitted sender invocation may emit. `use_data` introduces receiver-attached event payloads, sender argument passing, payload transfer policy, and per-event invocation semantics. That broader contract belongs in a separate profile if it is standardized.
 
 ## Does core DNA mean the raw `summoner-core` DNA export?
 

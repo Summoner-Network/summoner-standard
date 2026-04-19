@@ -9,6 +9,8 @@
 
 This document defines the portable public agent identity boundary for Summoner.
 
+Informatively, `id.v1` can be understood as a self-sovereign-style, TLS-inspired agent identity layer for transport-independent agent continuity, verification, and higher-level secure envelope or session workflows.
+
 It standardizes:
 - the self-signed public identity record exchanged between peers
 - the canonical JSON bytes used for signing and verification
@@ -18,7 +20,7 @@ It standardizes:
 
 This profile intentionally does not standardize:
 - local identity-file persistence and password-encryption policy
-- registry-backed trust, directory binding, or DID resolution
+- registry-backed trust, directory binding, or external identifier-resolution frameworks
 - session, envelope, or message-encryption semantics
 - governance policy about when an organization should trust `meta`
 
@@ -189,6 +191,8 @@ See [`conformance.md`](conformance.md) for practical test guidance.
 
 `id.v1` is a self-signed public identity profile.
 
+It is designed to make agent-level continuity and verification portable above any one live transport session.
+
 It proves that:
 - the record is internally consistent
 - the holder of the Ed25519 private key signed the public core
@@ -200,6 +204,8 @@ It does not, by itself, prove:
 - that a registry, directory, or allowlist recognizes the identity
 
 If stronger real-world binding is required, implementations SHOULD add an external trust policy such as pinning, allowlists, or directory-backed verification.
+
+This profile is specified directly on its own terms. Implementations MAY bridge it to SSI or DID-based environments, but `id.v1` conformance does not depend on adopting those external models.
 
 ## 11. Aurora implementation note
 

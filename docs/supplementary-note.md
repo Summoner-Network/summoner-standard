@@ -21,7 +21,7 @@ Summoner is a protocol and SDK for agent orchestration where message handling is
 At runtime, a client does three things:
 1. registers handlers (receive, send, hooks)
 2. evaluates routes against a state tape
-3. executes a receive-then-send cycle with explicit outcomes
+3. executes receive processing and sender evaluation over explicit outcomes
 
 ### 1.1 Registers handlers (receive, send, hooks)
 
@@ -79,7 +79,7 @@ async def decide(msg):
     return Stay(Trigger.ok)
 ```
 
-### 1.3 Executes a receive-then-send cycle with explicit outcomes
+### 1.3 Executes receive processing and sender evaluation with explicit outcomes
 
 Each receiver returns an explicit Action:
 
@@ -87,9 +87,9 @@ Each receiver returns an explicit Action:
 * **STAY**: remain in the same region of state
 * **MOVE**: advance by activating transition and target states
 
-These actions update the tape and trigger relevant senders. This makes control flow observable and testable as a trace.
+These actions update the tape and produce explicit outcomes that can later admit sender work. This makes control flow observable and testable as a trace.
 
-In the current core profile, this send step is limited to receiver-triggered untimed senders. Richer sender-side features such as event-data handoff or timed scheduling may exist in implementations, but they are not part of the first core review profile.
+In the current core profile, sender work is limited to receiver-triggered untimed sender passes over pending outcomes. A pass may consider outcomes from one inbound message or from multiple inbound messages batched together. Event-data handoff, sender data-transfer policy, and timed scheduling may exist in implementations, but they are outside the current core profile.
 
 ## 2. Route structure as a compositional interface
 
@@ -327,18 +327,19 @@ A conformance suite can be derived as trace-level tests: given an initial tape a
 
 Current SDK sender extensions such as receiver-attached event payload data, sender-owned payload transfer policy, and timed or guard-based scheduling are promising, but they fit better as later extension profiles than as part of the first core standard.
 
-Portable self-signed public identity is a different kind of candidate. It fits the standard set more cleanly because it has a crisp portable object boundary and verification contract, which is why the current review release standardizes it separately in [`identity-profile.md`](identity-profile.md).
+The portable public identity record is a different kind of candidate. It fits the standard set more cleanly because it has a crisp object boundary and verification contract, which is why the current review release standardizes it separately in [`identity-profile.md`](identity-profile.md).
 
-## 9. DNA: representing agent behavior as a portable bundle
+## 9. DNA: representing registered behavior as a projected view
 
-Summoner can serialize handler registrations into a compact DNA representation (routes, triggers, priorities, and source-level code pointers).
+Implementations may serialize handler registrations into richer DNA representations. Within the core profile, DNA is a projected registration view over routes, triggers, priorities, and function identity metadata. Some SDKs may also expose source-level code pointers or other runtime-specific material, but those richer forms are outside the core profile.
 
-Intended uses:
+Intended uses within the standard set:
 
-* portability of agent behavior across environments
-* reproducible deployment of the same semantics
+* deterministic inspection of registered behavior
 * a concrete object for security review (what handlers exist, what routes they bind to, what they emit)
-* a unit for signing, versioning, and conformance tests
+* a unit for diffing, audit, and conformance tests
+
+Richer SDK DNA may support additional portability, deployment, or signing workflows, but those uses are implementation-specific and not required for core-profile conformance.
 
 Minimal usage:
 

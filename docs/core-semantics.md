@@ -20,12 +20,12 @@ It is intended to support implementation-independent conformance testing.
 This profile intentionally does not standardize:
 - transport, deployment, or UI tooling
 - application-specific workflows
-- the richer sender orchestration runtime found in current SDKs, including `Event.data`, `use_data`, `data_mode`, `every`, `run_while`, and sender modes that continue or fire without pending receiver outcomes
+- extended sender orchestration beyond receiver-triggered untimed sender admission, including event-carried sender data, sender data-transfer policy, and timed or continuing sender modes
 - full SDK DNA capture formats used for code replay, merger reconstruction, or context shipping
 
 A richer runtime MAY expose more behavior than this document requires. Conformance to the core profile means that the richer runtime can be projected to the observable boundary defined here.
 
-The current public implementation reference for this area is [`Summoner-Network/summoner-core`](https://github.com/Summoner-Network/summoner-core), especially the current 1.2.x line. That repository is informative, not normative: conformance is defined by this document, not by a particular SDK release.
+The current public implementation reference for this area is [`Summoner-Network/summoner-core`](https://github.com/Summoner-Network/summoner-core). That repository is informative, not normative: conformance is defined by this document, not by a particular SDK release.
 
 ### 1.1 Design intent
 
@@ -34,11 +34,11 @@ This core profile is not intended to freeze one SDK's internal scheduler, queue 
 - reproduced by an independent implementation
 - compared by a conformance harness
 
-This design choice explains why the profile includes sender-local multiplicity via `multi` but defers `Event.data`, `use_data`, and `data_mode`.
+This design choice explains why the profile includes sender-local multiplicity via `multi` while leaving event-carried sender data semantics outside the core profile.
 
 `multi` is a sender-local emission rule. Once a sender has already been admitted, `multi` only changes whether that sender invocation yields one outbound payload or several.
 
-`use_data` is broader. It changes the receiver-event-sender contract itself by introducing receiver-attached event payloads, sender parameter passing, payload transfer policy, and per-event invocation behavior. Those concerns can make sense as a later extension profile, but they are intentionally outside the first core profile.
+`use_data` is broader. It changes the receiver-event-sender contract itself by introducing receiver-attached event payloads, sender parameter passing, payload transfer policy, and per-event invocation behavior. Those concerns may make sense in a later extension profile, but they are outside the first core profile.
 
 ## 2. Conventions and terminology
 
