@@ -1,4 +1,4 @@
-# Summoner Standard Profiles (Draft Review Release v0.2.0)
+# Summoner Standard Profiles
 
 **Webpage:** [https://summoner-network.github.io/summoner-standard](https://summoner-network.github.io/summoner-standard)
 
